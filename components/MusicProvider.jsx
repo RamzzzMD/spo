@@ -18,45 +18,63 @@ export function MusicProvider({ children }) {
   const [track, setTrack] = useState(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [current, setCurrent] = useState(0);
 
   function playTrack(nextTrack) {
-    if (!nextTrack) return;
+    if (!nextTrack?.audioUrl) {
+      setTrack(nextTrack || null);
+      setPlaying(false);
+      return;
+    }
 
     setTrack(nextTrack);
-
-    if (nextTrack.urlpreview) {
-      setPlaying(true);
-    } else {
-      setPlaying(false);
-    }
+    setPlaying(true);
+    setProgress(0);
+    setCurrent(0);
   }
 
   function togglePlay() {
-    if (!track?.urlpreview) return;
+    if (!track?.audioUrl) return;
     setPlaying((value) => !value);
   }
 
   useEffect(() => {
     const audio = audioRef.current;
 
-    if (!audio || !track?.urlpreview) return;
+    if (!audio || !track?.audioUrl) return;
+
+    audio.src = track.audioUrl;
+    audio.load();
+
+    if (playing) {
+      audio.play().catch(() => setPlaying(false));
+    }
+  }, [track?.audioUrl]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    if (!audio || !track?.audioUrl) return;
 
     if (playing) {
       audio.play().catch(() => setPlaying(false));
     } else {
       audio.pause();
     }
-  }, [playing, track]);
+  }, [playing, track?.audioUrl]);
 
   const value = useMemo(
     () => ({
       track,
       playing,
       progress,
+      duration,
+      current,
       playTrack,
       togglePlay
     }),
-    [track, playing, progress]
+    [track, playing, progress, duration, current]
   );
 
   return (
@@ -65,18 +83,24 @@ export function MusicProvider({ children }) {
 
       <audio
         ref={audioRef}
-        src={track?.urlpreview || ""}
+        preload="metadata"
+        onLoadedMetadata={(e) => {
+          const audio = e.currentTarget;
+          setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+        }}
         onTimeUpdate={(e) => {
           const audio = e.currentTarget;
-          const percent = audio.duration
-            ? (audio.currentTime / audio.duration) * 100
-            : 0;
+          const now = audio.currentTime || 0;
+          const total = audio.duration || 0;
 
-          setProgress(percent);
+          setCurrent(now);
+          setDuration(Number.isFinite(total) ? total : 0);
+          setProgress(total ? (now / total) * 100 : 0);
         }}
         onEnded={() => {
           setPlaying(false);
           setProgress(0);
+          setCurrent(0);
         }}
       />
     </MusicContext.Provider>
@@ -93,8 +117,16 @@ export function useMusic() {
   return ctx;
 }
 
+function fmtTime(seconds) {
+  const safe = Number.isFinite(seconds) ? seconds : 0;
+  const m = Math.floor(safe / 60);
+  const s = Math.floor(safe % 60);
+
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
 export function AudioPlayer() {
-  const { track, playing, progress, togglePlay } = useMusic();
+  const { track, playing, progress, current, duration, togglePlay } = useMusic();
 
   return (
     <div className="bottom-player">
@@ -106,7 +138,10 @@ export function AudioPlayer() {
 
         <div>
           <strong>{track?.title || "No song playing"}</strong>
-          <span>{track?.artist || "Choose a song to start background play"}</span>
+          <span>
+            {track?.artist ||
+              "Choose a song to start full background playback"}
+          </span>
         </div>
       </div>
 
@@ -115,7 +150,7 @@ export function AudioPlayer() {
           type="button"
           className="main-play-button"
           onClick={togglePlay}
-          disabled={!track?.urlpreview}
+          disabled={!track?.audioUrl}
         >
           {playing ? (
             <Pause size={21} fill="currentColor" />
@@ -124,14 +159,20 @@ export function AudioPlayer() {
           )}
         </button>
 
-        <div className="player-progress">
-          <span style={{ width: `${progress}%` }} />
+        <div className="player-time-row">
+          <small>{fmtTime(current)}</small>
+
+          <div className="player-progress">
+            <span style={{ width: `${progress}%` }} />
+          </div>
+
+          <small>{duration ? fmtTime(duration) : track?.duration || "0:00"}</small>
         </div>
       </div>
 
       <div className="player-side">
         <Volume2 size={18} />
-        <span>Background Player</span>
+        <span>{track?.isFullAudio ? "Full Song" : "No Preview Mode"}</span>
       </div>
     </div>
   );
