@@ -1,14 +1,17 @@
 import "./globals.css";
+import AppShell from "@/components/AppShell";
 
 export const metadata = {
-  title: "Ranzz AIO Downloader",
-  description: "All-in-One downloader with Spotify-style search UI."
+  title: "Ranzz API Downloader",
+  description: "AIO Downloader Web."
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <body>{children}</body>
+      <body>
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }
