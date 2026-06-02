@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Boxes,
+  Compass,
   Download,
+  Heart,
   Home,
+  Library,
   Music2,
-  Search,
-  TerminalSquare
+  Search
 } from "lucide-react";
 import { AudioPlayer, MusicProvider } from "@/components/MusicProvider";
 
@@ -25,13 +26,13 @@ const navs = [
   },
   {
     href: "/aio",
-    label: "AIO",
+    label: "Download Center",
     icon: Download
   },
   {
     href: "/detail",
-    label: "Detail",
-    icon: Boxes
+    label: "Now Detail",
+    icon: Compass
   }
 ];
 
@@ -40,20 +41,20 @@ export default function AppShell({ children }) {
 
   return (
     <MusicProvider>
-      <div className="app-layout">
-        <aside className="sidebar">
+      <div className="music-app">
+        <aside className="music-sidebar">
           <Link href="/" className="brand">
-            <div className="brand-icon">
-              <Music2 size={23} />
+            <div className="brand-mark">
+              <Music2 size={25} />
             </div>
 
             <div>
-              <strong>Ranzz API</strong>
-              <span>AIO Downloader</span>
+              <strong>Ranzz Play</strong>
+              <span>Music & Downloader</span>
             </div>
           </Link>
 
-          <nav className="side-nav">
+          <nav className="music-nav">
             {navs.map((item) => {
               const Icon = item.icon;
               const active =
@@ -67,39 +68,46 @@ export default function AppShell({ children }) {
                   href={item.href}
                   className={active ? "active" : ""}
                 >
-                  <Icon size={18} />
+                  <Icon size={19} />
                   {item.label}
                 </Link>
               );
             })}
           </nav>
 
-          <div className="api-box">
-            <div className="section-kicker">API Status</div>
-            <h3>Ready for Vercel</h3>
-
-            <div className="mini-endpoint">
-              <TerminalSquare size={16} />
-              <span>GET /api/spotify/search</span>
+          <div className="library-card">
+            <div className="library-title">
+              <Library size={18} />
+              <strong>Your Library</strong>
             </div>
 
-            <div className="mini-endpoint">
-              <TerminalSquare size={16} />
-              <span>POST /api/downr</span>
+            <div className="playlist-pill active">
+              <Heart size={15} />
+              Liked Preview
+            </div>
+
+            <div className="playlist-pill">
+              <Music2 size={15} />
+              Search History
+            </div>
+
+            <div className="playlist-pill">
+              <Download size={15} />
+              Downloaded Links
             </div>
           </div>
         </aside>
 
-        <main className="main-area">
-          <header className="top-header">
-            <div>
-              <p>Web API Dashboard</p>
-              <h1>Ranzz AIO Downloader</h1>
+        <main className="music-main">
+          <header className="music-topbar">
+            <div className="topbar-left">
+              <span>Professional Music Player</span>
+              <strong>Listen, search, preview, and download</strong>
             </div>
 
-            <Link href="/search" className="header-search-pill">
+            <Link href="/search" className="topbar-search">
               <Search size={18} />
-              Search Spotify music...
+              Search songs, artists, tracks...
             </Link>
           </header>
 
