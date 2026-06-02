@@ -1,13 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Play } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, ExternalLink, Loader2, Play } from "lucide-react";
 import { useMusic } from "@/components/MusicProvider";
+import { resolveFullAudioTrack } from "@/lib/media-client";
 
 export default function DetailClient({ track }) {
   const { playTrack } = useMusic();
 
+  const [loadingFull, setLoadingFull] = useState(false);
+  const [error, setError] = useState("");
+
   const hasData = track?.title || track?.artist || track?.url;
+
+  async function handlePlayFull() {
+    try {
+      setError("");
+      setLoadingFull(true);
+
+      const fullTrack = await resolveFullAudioTrack(track);
+
+      playTrack(fullTrack);
+    } catch (err) {
+      setError(err.message || "Full song tidak tersedia.");
+    } finally {
+      setLoadingFull(false);
+    }
+  }
 
   if (!hasData) {
     return (
@@ -40,10 +60,14 @@ export default function DetailClient({ track }) {
 
           <button
             type="button"
-            onClick={() => playTrack(track)}
-            disabled={!track.urlpreview}
+            onClick={handlePlayFull}
+            disabled={loadingFull || !track.url}
           >
-            <Play size={28} fill="currentColor" />
+            {loadingFull ? (
+              <Loader2 className="spin" size={28} />
+            ) : (
+              <Play size={28} fill="currentColor" />
+            )}
           </button>
         </div>
 
@@ -54,18 +78,29 @@ export default function DetailClient({ track }) {
 
           <div className="detail-tags">
             <span>{track.duration || "0:00"}</span>
-            <span>{track.urlpreview ? "Preview Available" : "No Preview"}</span>
+            <span>Full Song Mode</span>
             <span>Ranzz Play</span>
           </div>
+
+          {error && <div className="song-error detail-error">{error}</div>}
 
           <div className="detail-buttons">
             <button
               type="button"
-              onClick={() => playTrack(track)}
-              disabled={!track.urlpreview}
+              onClick={handlePlayFull}
+              disabled={loadingFull || !track.url}
             >
-              <Play size={18} fill="currentColor" />
-              Play Background
+              {loadingFull ? (
+                <>
+                  <Loader2 className="spin" size={18} />
+                  Loading Full
+                </>
+              ) : (
+                <>
+                  <Play size={18} fill="currentColor" />
+                  Play Full Song
+                </>
+              )}
             </button>
 
             {track.url && (
