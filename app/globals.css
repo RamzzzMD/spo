@@ -985,4 +985,191 @@ pre {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .aio-error {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(243, 114, 127, 0.12);
+  color: #ffd6db;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.aio-media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.aio-media-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 20px;
+  background: #101010;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 8px;
+}
+
+.aio-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.aio-card-top span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.aio-card-top svg {
+  color: #1ed760;
+}
+
+.aio-card-top small {
+  padding: 6px 9px;
+  border-radius: 9999px;
+  background: #1f1f1f;
+  color: #b3b3b3;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.aio-media-preview {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  background: #050505;
+  object-fit: cover;
+}
+
+video.aio-media-preview {
+  object-fit: contain;
+}
+
+.aio-audio-preview {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  min-height: 210px;
+  padding: 18px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at center, rgba(30, 215, 96, 0.16), transparent 70%),
+    #050505;
+}
+
+.aio-audio-preview svg {
+  color: #1ed760;
+}
+
+.aio-audio-preview audio {
+  width: 100%;
+}
+
+.aio-no-preview {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 8px;
+  min-height: 210px;
+  padding: 22px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at center, rgba(30, 215, 96, 0.13), transparent 70%),
+    #050505;
+  color: #b3b3b3;
+}
+
+.aio-no-preview svg {
+  color: #1ed760;
+}
+
+.aio-no-preview strong {
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.aio-no-preview span {
+  max-width: 260px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.aio-card-info {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.aio-card-info strong,
+.aio-card-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aio-card-info strong {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.aio-card-info span {
+  color: #b3b3b3;
+  font-size: 12px;
+}
+
+.aio-download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 43px;
+  border-radius: 9999px;
+  background: #1ed760;
+  color: #000000;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.json-details {
+  margin-top: 18px;
+}
+
+.json-details summary {
+  cursor: pointer;
+  width: fit-content;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  background: #1f1f1f;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1180px) {
+  .aio-media-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .aio-media-grid {
+    grid-template-columns: 1fr;
+  }
 }
