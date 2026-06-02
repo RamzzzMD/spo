@@ -1,73 +1,88 @@
 import Link from "next/link";
-import { Download, Music2, Search, Server } from "lucide-react";
+import { Download, Play, Search, Sparkles } from "lucide-react";
+
+const featured = [
+  {
+    title: "Spotify Search",
+    desc: "Find tracks, artist names, covers, duration, and playable previews.",
+    href: "/search",
+    icon: Search
+  },
+  {
+    title: "Background Player",
+    desc: "Play track previews while browsing other pages.",
+    href: "/search",
+    icon: Play
+  },
+  {
+    title: "Download Center",
+    desc: "Paste media links from many platforms and extract results.",
+    href: "/aio",
+    icon: Download
+  }
+];
 
 export default function HomePage() {
   return (
-    <section className="home-page">
-      <div className="hero-api">
-        <div>
-          <p className="section-kicker green">Ranzz Web API</p>
-          <h2>AIO Downloader with Spotify Background Player.</h2>
+    <section className="home-music">
+      <div className="home-hero">
+        <div className="hero-text">
+          <p className="eyebrow">Ranzz Play Music</p>
+          <h2>Professional web music player with smart downloader.</h2>
           <p>
-            Dashboard API modern untuk download multi-platform, search Spotify,
-            detail track, dan audio preview yang tetap berjalan di background.
+            Search songs, preview music, open track details, and keep the player
+            running in the background while exploring the app.
           </p>
 
-          <div className="hero-actions">
-            <Link href="/aio">
-              <Download size={18} />
-              Try AIO
+          <div className="hero-buttons">
+            <Link href="/search">
+              <Play size={18} fill="currentColor" />
+              Start Listening
             </Link>
 
-            <Link href="/search" className="secondary">
-              <Search size={18} />
-              Search Music
+            <Link href="/aio" className="light">
+              <Download size={18} />
+              Download Center
             </Link>
           </div>
         </div>
 
-        <div className="hero-orb">
-          <Music2 size={76} />
+        <div className="album-showcase">
+          <div className="album-card one">
+            <Sparkles size={42} />
+            <strong>Ranzz Mix</strong>
+            <span>Daily preview playlist</span>
+          </div>
+
+          <div className="album-card two">
+            <Play size={42} fill="currentColor" />
+            <strong>Now Playing</strong>
+            <span>Background audio ready</span>
+          </div>
         </div>
       </div>
 
-      <div className="endpoint-grid">
-        <Link href="/aio" className="endpoint-card">
-          <Server size={25} />
-          <span>Downloader Endpoint</span>
-          <strong>POST /api/downr</strong>
-          <p>Auto cookie, retry endpoint utama, lalu fallback endpoint cadangan.</p>
-        </Link>
+      <div className="featured-grid">
+        {featured.map((item) => {
+          const Icon = item.icon;
 
-        <Link href="/search" className="endpoint-card">
-          <Search size={25} />
-          <span>Spotify Search</span>
-          <strong>GET /api/spotify/search</strong>
-          <p>Search lagu, ambil cover, artist, durasi, URL, dan audio preview.</p>
-        </Link>
-
-        <Link href="/detail" className="endpoint-card">
-          <Music2 size={25} />
-          <span>Track Detail</span>
-          <strong>/detail</strong>
-          <p>Halaman detail lagu dengan tombol play background.</p>
-        </Link>
+          return (
+            <Link key={item.title} href={item.href} className="feature-card">
+              <Icon size={27} />
+              <strong>{item.title}</strong>
+              <p>{item.desc}</p>
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="code-card">
-        <div className="section-kicker">Example Request</div>
+      <div className="music-banner">
+        <div>
+          <p className="eyebrow">Made for listening</p>
+          <h3>Clean cards, smooth dark UI, and always-on player.</h3>
+        </div>
 
-        <pre>{`fetch("/api/downr", {
-  method: "POST",
-  headers: {
-    "content-type": "application/json"
-  },
-  body: JSON.stringify({
-    url: "https://vt.tiktok.com/xxxxx"
-  })
-})
-  .then(res => res.json())
-  .then(console.log);`}</pre>
+        <Link href="/search">Explore Music</Link>
       </div>
     </section>
   );
