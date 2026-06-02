@@ -1,8 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Sparkles } from "lucide-react";
 import TrackCard from "@/components/TrackCard";
+
+const suggestions = [
+  "trouble is a friend",
+  "night changes",
+  "blue jeans",
+  "rewrite the stars",
+  "one of the girls",
+  "about you"
+];
 
 export default function SearchClient() {
   const [query, setQuery] = useState("trouble is a friend");
@@ -10,19 +19,18 @@ export default function SearchClient() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
 
-  async function handleSearch(e) {
-    e.preventDefault();
-
-    const q = query.trim();
+  async function searchMusic(keyword = query) {
+    const q = String(keyword || "").trim();
 
     if (!q) return;
 
     try {
+      setQuery(q);
       setLoading(true);
       setSearched(true);
 
       const res = await fetch(
-        `/api/spotify/search?q=${encodeURIComponent(q)}&limit=8`,
+        `/api/spotify/search?q=${encodeURIComponent(q)}&limit=12`,
         {
           cache: "no-store"
         }
@@ -39,21 +47,27 @@ export default function SearchClient() {
   }
 
   return (
-    <section className="page-section">
-      <div className="page-title">
+    <section className="search-page">
+      <div className="section-heading">
         <div>
-          <p className="section-kicker green">Spotify Search API</p>
-          <h2>Search Music</h2>
+          <p className="eyebrow">Discover Music</p>
+          <h2>Search songs you love.</h2>
         </div>
       </div>
 
-      <form className="search-big" onSubmit={handleSearch}>
-        <Search size={21} />
+      <form
+        className="hero-search"
+        onSubmit={(e) => {
+          e.preventDefault();
+          searchMusic();
+        }}
+      >
+        <Search size={22} />
 
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Cari lagu, artist, atau judul..."
+          placeholder="Search song, artist, or track..."
         />
 
         <button type="submit" disabled={loading}>
@@ -61,14 +75,24 @@ export default function SearchClient() {
         </button>
       </form>
 
+      <div className="suggestion-row">
+        <Sparkles size={17} />
+
+        {suggestions.map((item) => (
+          <button key={item} type="button" onClick={() => searchMusic(item)}>
+            {item}
+          </button>
+        ))}
+      </div>
+
       {searched && tracks.length === 0 && !loading && (
-        <div className="empty-card">
-          <strong>Musik tidak ditemukan.</strong>
-          <span>Coba keyword lain.</span>
+        <div className="empty-music">
+          <strong>No songs found.</strong>
+          <span>Try another keyword or artist name.</span>
         </div>
       )}
 
-      <div className="track-grid">
+      <div className="song-grid">
         {tracks.map((track, index) => (
           <TrackCard key={`${track.url}-${index}`} track={track} />
         ))}
