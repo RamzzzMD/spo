@@ -12,6 +12,14 @@ import { Pause, Play, Volume2 } from "lucide-react";
 
 const MusicContext = createContext(null);
 
+function fmtTime(seconds) {
+  const safe = Number.isFinite(seconds) ? seconds : 0;
+  const m = Math.floor(safe / 60);
+  const s = Math.floor(safe % 60);
+
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
 export function MusicProvider({ children }) {
   const audioRef = useRef(null);
 
@@ -25,6 +33,9 @@ export function MusicProvider({ children }) {
     if (!nextTrack?.audioUrl) {
       setTrack(nextTrack || null);
       setPlaying(false);
+      setProgress(0);
+      setCurrent(0);
+      setDuration(0);
       return;
     }
 
@@ -32,6 +43,7 @@ export function MusicProvider({ children }) {
     setPlaying(true);
     setProgress(0);
     setCurrent(0);
+    setDuration(0);
   }
 
   function togglePlay() {
@@ -42,9 +54,17 @@ export function MusicProvider({ children }) {
   useEffect(() => {
     const audio = audioRef.current;
 
-    if (!audio || !track?.audioUrl) return;
+    if (!audio) return;
+
+    if (!track?.audioUrl) {
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+      return;
+    }
 
     audio.src = track.audioUrl;
+    audio.currentTime = 0;
     audio.load();
 
     if (playing) {
@@ -86,14 +106,16 @@ export function MusicProvider({ children }) {
         preload="metadata"
         onLoadedMetadata={(e) => {
           const audio = e.currentTarget;
-          setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+          const total = audio.duration || 0;
+
+          setDuration(Number.isFinite(total) ? total : 0);
         }}
         onTimeUpdate={(e) => {
           const audio = e.currentTarget;
           const now = audio.currentTime || 0;
           const total = audio.duration || 0;
 
-          setCurrent(now);
+          setCurrent(Number.isFinite(now) ? now : 0);
           setDuration(Number.isFinite(total) ? total : 0);
           setProgress(total ? (now / total) * 100 : 0);
         }}
@@ -115,14 +137,6 @@ export function useMusic() {
   }
 
   return ctx;
-}
-
-function fmtTime(seconds) {
-  const safe = Number.isFinite(seconds) ? seconds : 0;
-  const m = Math.floor(safe / 60);
-  const s = Math.floor(safe % 60);
-
-  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 export function AudioPlayer() {
@@ -172,7 +186,7 @@ export function AudioPlayer() {
 
       <div className="player-side">
         <Volume2 size={18} />
-        <span>{track?.isFullAudio ? "Full Song" : "No Preview Mode"}</span>
+        <span>{track?.isFullAudio ? "Full Song" : "Full Audio Only"}</span>
       </div>
     </div>
   );
