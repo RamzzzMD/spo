@@ -23,7 +23,7 @@ export default function DetailClient({ track }) {
 
       playTrack(fullTrack);
     } catch (err) {
-      setError(err.message || "Full song tidak tersedia.");
+      setError(err.message || "Full audio tidak tersedia.");
     } finally {
       setLoadingFull(false);
     }
@@ -54,7 +54,10 @@ export default function DetailClient({ track }) {
       <div className="track-detail-hero">
         <div className="detail-cover-wrap">
           <img
-            src={track.thumb || "https://placehold.co/600x600/181818/1ed760?text=Music"}
+            src={
+              track.thumb ||
+              "https://placehold.co/600x600/181818/1ed760?text=Music"
+            }
             alt={track.title || "Track cover"}
           />
 
