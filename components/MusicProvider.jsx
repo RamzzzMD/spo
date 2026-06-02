@@ -20,31 +20,25 @@ export function MusicProvider({ children }) {
   const [progress, setProgress] = useState(0);
 
   function playTrack(nextTrack) {
-    if (!nextTrack?.urlpreview) {
-      setTrack(nextTrack);
-      setPlaying(false);
-      return;
-    }
-
-    const isSame = track?.urlpreview === nextTrack.urlpreview;
-
-    if (isSame) {
-      setPlaying(true);
-      return;
-    }
+    if (!nextTrack) return;
 
     setTrack(nextTrack);
-    setPlaying(true);
-    setProgress(0);
+
+    if (nextTrack.urlpreview) {
+      setPlaying(true);
+    } else {
+      setPlaying(false);
+    }
   }
 
   function togglePlay() {
     if (!track?.urlpreview) return;
-    setPlaying((v) => !v);
+    setPlaying((value) => !value);
   }
 
   useEffect(() => {
     const audio = audioRef.current;
+
     if (!audio || !track?.urlpreview) return;
 
     if (playing) {
@@ -103,39 +97,39 @@ export function AudioPlayer() {
   const { track, playing, progress, togglePlay } = useMusic();
 
   return (
-    <div className="audio-player">
-      <div className="audio-track">
+    <div className="bottom-player">
+      <div className="player-song">
         <img
-          src={track?.thumb || "https://placehold.co/80x80/181818/1ed760?text=R"}
+          src={track?.thumb || "https://placehold.co/120x120/181818/1ed760?text=R"}
           alt={track?.title || "No track"}
         />
 
         <div>
-          <strong>{track?.title || "Belum ada lagu diputar"}</strong>
-          <span>{track?.artist || "Pilih lagu dari halaman Search"}</span>
+          <strong>{track?.title || "No song playing"}</strong>
+          <span>{track?.artist || "Choose a song to start background play"}</span>
         </div>
       </div>
 
-      <div className="audio-center">
+      <div className="player-center">
         <button
           type="button"
+          className="main-play-button"
           onClick={togglePlay}
-          className="player-button"
           disabled={!track?.urlpreview}
         >
           {playing ? (
-            <Pause size={20} fill="currentColor" />
+            <Pause size={21} fill="currentColor" />
           ) : (
-            <Play size={20} fill="currentColor" />
+            <Play size={21} fill="currentColor" />
           )}
         </button>
 
-        <div className="progress-line">
+        <div className="player-progress">
           <span style={{ width: `${progress}%` }} />
         </div>
       </div>
 
-      <div className="audio-volume">
+      <div className="player-side">
         <Volume2 size={18} />
         <span>Background Player</span>
       </div>
