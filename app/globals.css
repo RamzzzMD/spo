@@ -1205,3 +1205,108 @@ video.aio-media-preview {
   font-weight: 800;
   text-align: center;
 }
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.skip-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  min-height: auto;
+}
+.skip-btn:not(:disabled):hover {
+  color: #fff;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 8px;
+  min-height: auto;
+}
+.action-btn:hover { color: #fff; }
+.action-btn.active-green { color: var(--green); }
+
+/* SLIDE PANEL QUEUE */
+.queue-panel {
+  position: fixed;
+  right: 0;
+  bottom: 87px;
+  width: 340px;
+  height: calc(100vh - 87px);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  padding: 24px;
+  overflow-y: auto;
+  z-index: 80;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  animation: slideLeft 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.queue-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.queue-panel-header h3 { margin: 0; font-size: 20px; }
+.queue-panel-header button {
+  background: transparent;
+  color: var(--muted);
+  padding: 4px;
+  min-height: auto;
+}
+
+.queue-section .eyebrow {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.empty-txt {
+  color: var(--muted);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+.queue-item img {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.queue-item div {
+  flex: 1;
+  overflow: hidden;
+}
+.queue-item strong, .queue-item span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-item strong { font-size: 14px; margin-bottom: 2px;}
+.queue-item span { font-size: 12px; color: var(--muted); }
+.opacity-70 { opacity: 0.7; }
