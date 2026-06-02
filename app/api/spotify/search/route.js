@@ -4,9 +4,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function cleanLimit(value) {
-  const n = Number(value || 5);
-  if (!Number.isFinite(n)) return 5;
-  return Math.max(1, Math.min(Math.floor(n), 10));
+  const n = Number(value || 8);
+
+  if (!Number.isFinite(n)) return 8;
+
+  return Math.max(1, Math.min(Math.floor(n), 12));
 }
 
 export async function GET(req) {
@@ -49,32 +51,5 @@ export async function GET(req) {
         }
       }
     );
-  }
-}
-
-export async function POST(req) {
-  const body = await req.json().catch(() => ({}));
-
-  const q = String(body?.q || body?.query || "").trim();
-  const limit = cleanLimit(body?.limit);
-
-  try {
-    const result = await spotifySearch(q, limit);
-
-    return Response.json({
-      Status: true,
-      Code: 200,
-      Query: q,
-      Result: result,
-      Error: null
-    });
-  } catch (err) {
-    return Response.json({
-      Status: false,
-      Code: 500,
-      Query: q,
-      Result: [],
-      Error: err.message || "Spotify search failed"
-    });
   }
 }
