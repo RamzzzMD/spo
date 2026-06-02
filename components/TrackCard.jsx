@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Info, Play } from "lucide-react";
+import { ExternalLink, Info, Loader2, Play } from "lucide-react";
+import { useState } from "react";
 import { useMusic } from "@/components/MusicProvider";
+import { resolveFullAudioTrack } from "@/lib/media-client";
 
 function detailHref(track) {
   const params = new URLSearchParams({
@@ -19,6 +21,23 @@ function detailHref(track) {
 
 export default function TrackCard({ track, large = false }) {
   const { playTrack } = useMusic();
+  const [loadingFull, setLoadingFull] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handlePlayFull() {
+    try {
+      setError("");
+      setLoadingFull(true);
+
+      const fullTrack = await resolveFullAudioTrack(track);
+
+      playTrack(fullTrack);
+    } catch (err) {
+      setError(err.message || "Full song tidak tersedia.");
+    } finally {
+      setLoadingFull(false);
+    }
+  }
 
   return (
     <article className={large ? "song-card large" : "song-card"}>
@@ -31,10 +50,15 @@ export default function TrackCard({ track, large = false }) {
         <button
           type="button"
           className="cover-play"
-          onClick={() => playTrack(track)}
-          disabled={!track.urlpreview}
+          onClick={handlePlayFull}
+          disabled={loadingFull || !track.url}
+          title="Play full song"
         >
-          <Play size={20} fill="currentColor" />
+          {loadingFull ? (
+            <Loader2 className="spin" size={20} />
+          ) : (
+            <Play size={20} fill="currentColor" />
+          )}
         </button>
       </div>
 
@@ -44,14 +68,25 @@ export default function TrackCard({ track, large = false }) {
         <small>{track.duration || "-"}</small>
       </div>
 
+      {error && <div className="song-error">{error}</div>}
+
       <div className="song-actions">
         <button
           type="button"
-          onClick={() => playTrack(track)}
-          disabled={!track.urlpreview}
+          onClick={handlePlayFull}
+          disabled={loadingFull || !track.url}
         >
-          <Play size={15} />
-          Play
+          {loadingFull ? (
+            <>
+              <Loader2 className="spin" size={15} />
+              Loading Full
+            </>
+          ) : (
+            <>
+              <Play size={15} />
+              Play Full
+            </>
+          )}
         </button>
 
         <Link href={detailHref(track)}>
