@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Info, Loader2, Play } from "lucide-react";
+import { ExternalLink, Info, Loader2, Play, ListPlus } from "lucide-react";
 import { useState } from "react";
 import { useMusic } from "@/components/MusicProvider";
 import { resolveFullAudioTrack } from "@/lib/media-client";
@@ -15,27 +15,40 @@ function detailHref(track) {
     url: track.url || "",
     preview: track.urlpreview || ""
   });
-
   return `/detail?${params.toString()}`;
 }
 
 export default function TrackCard({ track, large = false }) {
-  const { playTrack } = useMusic();
+  const { playTrack, addToQueue } = useMusic();
+  
   const [loadingFull, setLoadingFull] = useState(false);
+  const [loadingQueue, setLoadingQueue] = useState(false);
   const [error, setError] = useState("");
 
   async function handlePlayFull() {
     try {
       setError("");
       setLoadingFull(true);
-
       const fullTrack = await resolveFullAudioTrack(track);
-
       playTrack(fullTrack);
     } catch (err) {
       setError(err.message || "Full song tidak tersedia.");
     } finally {
       setLoadingFull(false);
+    }
+  }
+
+  async function handleAddToQueue() {
+    try {
+      setError("");
+      setLoadingQueue(true);
+      // Resolve audio URL-nya dulu agar langsung bisa dimainkan saat antrean tiba
+      const fullTrack = await resolveFullAudioTrack(track);
+      addToQueue(fullTrack);
+    } catch (err) {
+      setError(err.message || "Gagal menambah ke antrean.");
+    } finally {
+      setLoadingQueue(false);
     }
   }
 
@@ -51,14 +64,9 @@ export default function TrackCard({ track, large = false }) {
           type="button"
           className="cover-play"
           onClick={handlePlayFull}
-          disabled={loadingFull || !track.url}
-          title="Play full song"
+          disabled={loadingFull || loadingQueue || !track.url}
         >
-          {loadingFull ? (
-            <Loader2 className="spin" size={20} />
-          ) : (
-            <Play size={20} fill="currentColor" />
-          )}
+          {loadingFull ? <Loader2 className="spin" size={20} /> : <Play size={20} fill="currentColor" />}
         </button>
       </div>
 
@@ -71,35 +79,18 @@ export default function TrackCard({ track, large = false }) {
       {error && <div className="song-error">{error}</div>}
 
       <div className="song-actions">
-        <button
-          type="button"
-          onClick={handlePlayFull}
-          disabled={loadingFull || !track.url}
-        >
-          {loadingFull ? (
-            <>
-              <Loader2 className="spin" size={15} />
-              Loading Full
-            </>
-          ) : (
-            <>
-              <Play size={15} />
-              Play Full
-            </>
-          )}
+        <button type="button" onClick={handlePlayFull} disabled={loadingFull || loadingQueue || !track.url}>
+          {loadingFull ? <><Loader2 className="spin" size={15} /> Loading</> : <><Play size={15} /> Play Full</>}
+        </button>
+        
+        {/* TOMBOL BARU ADD TO QUEUE */}
+        <button type="button" onClick={handleAddToQueue} disabled={loadingFull || loadingQueue || !track.url} style={{ background: '#333', color: '#fff' }}>
+          {loadingQueue ? <><Loader2 className="spin" size={15} /> Wait...</> : <><ListPlus size={15} /> Queue</>}
         </button>
 
         <Link href={detailHref(track)}>
-          <Info size={15} />
-          Detail
+          <Info size={15} /> Detail
         </Link>
-
-        {track.url && (
-          <a href={track.url} target="_blank" rel="noreferrer">
-            <ExternalLink size={15} />
-            Open
-          </a>
-        )}
       </div>
     </article>
   );
