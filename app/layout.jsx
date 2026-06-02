@@ -2,8 +2,8 @@ import "./globals.css";
 import AppShell from "@/components/AppShell";
 
 export const metadata = {
-  title: "Ranzz API Downloader",
-  description: "AIO Downloader Web."
+  title: "Ranzz Play",
+  description: "Professional web play music with background player and AIO downloader."
 };
 
 export default function RootLayout({ children }) {
