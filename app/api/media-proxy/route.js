@@ -11,6 +11,7 @@ function isPrivateIp(ip) {
   if (!ip) return true;
 
   if (ip === "::1" || ip === "127.0.0.1") return true;
+
   if (ip.startsWith("10.")) return true;
   if (ip.startsWith("192.168.")) return true;
   if (ip.startsWith("169.254.")) return true;
@@ -120,13 +121,14 @@ export async function GET(req) {
     const contentType =
       upstream.headers.get("content-type") || "application/octet-stream";
 
-    headers.set("content-type", contentType);
-    headers.set("cache-control", "no-store");
-    headers.set("accept-ranges", upstream.headers.get("accept-ranges") || "bytes");
-    headers.set("content-disposition", "inline");
-
     const contentLength = upstream.headers.get("content-length");
     const contentRange = upstream.headers.get("content-range");
+    const acceptRanges = upstream.headers.get("accept-ranges");
+
+    headers.set("content-type", contentType);
+    headers.set("cache-control", "no-store");
+    headers.set("content-disposition", "inline");
+    headers.set("accept-ranges", acceptRanges || "bytes");
 
     if (contentLength) headers.set("content-length", contentLength);
     if (contentRange) headers.set("content-range", contentRange);
