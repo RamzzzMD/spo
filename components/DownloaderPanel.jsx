@@ -3,58 +3,23 @@
 import { useMemo, useState } from "react";
 import { Copy, Download, Link as LinkIcon, Loader2 } from "lucide-react";
 
-const PLATFORMS = [
-  "Tiktok",
-  "Douyin",
-  "Capcut",
-  "Threads",
+const platforms = [
+  "TikTok",
   "Instagram",
+  "YouTube",
   "Facebook",
-  "Espn",
-  "Pinterest",
-  "imdb",
-  "imgur",
-  "ifunny",
-  "Izlesene",
-  "Reddit",
-  "Youtube",
+  "Spotify",
+  "SoundCloud",
   "Twitter",
+  "Reddit",
+  "Pinterest",
+  "CapCut",
   "Vimeo",
-  "Snapchat",
   "Bilibili",
   "Dailymotion",
-  "Sharechat",
-  "Likee",
-  "Linkedin",
-  "Tumblr",
-  "Hipi",
-  "Telegram",
-  "Getstickerpack",
-  "Bitchute",
-  "Febspot",
-  "9GAG",
-  "ok.ru",
-  "Rumble",
-  "Streamable",
-  "Ted",
-  "SohuTv",
-  "Xvideos",
-  "Xnxx",
-  "Xiaohongshu",
-  "Ixigua",
-  "Weibo",
-  "Miaopai",
-  "Meipai",
-  "Xiaoying",
-  "National Video",
-  "Yingke",
-  "Sina",
-  "Vk-vkvideo",
-  "Soundcloud",
+  "Bandcamp",
   "Mixcloud",
-  "Spotify",
-  "Zingmp3",
-  "Bandcamp"
+  "Zingmp3"
 ];
 
 function collectLinks(value, out = new Set()) {
@@ -98,7 +63,7 @@ export default function DownloaderPanel() {
         Input: null,
         Endpoint: null,
         Result: null,
-        Error: "Masukkan URL terlebih dahulu."
+        Error: "Paste URL first."
       });
       return;
     }
@@ -127,7 +92,7 @@ export default function DownloaderPanel() {
         Input: input,
         Endpoint: null,
         Result: null,
-        Error: err.message || "Request failed"
+        Error: err.message || "Download failed"
       });
     } finally {
       setLoading(false);
@@ -139,35 +104,46 @@ export default function DownloaderPanel() {
 
     await navigator.clipboard.writeText(JSON.stringify(result, null, 2));
     setCopied(true);
-    setTimeout(() => setCopied(false), 1200);
+    setTimeout(() => setCopied(false), 1300);
   }
 
   return (
-    <section className="page-section">
-      <div className="page-title">
+    <section className="download-center">
+      <div className="section-heading">
         <div>
-          <p className="section-kicker green">AIO Downloader API</p>
-          <h2>All-in-One Downloader</h2>
+          <p className="eyebrow">Download Center</p>
+          <h2>Save your favorite media.</h2>
         </div>
-
-        <span className="api-status">POST /api/downr</span>
       </div>
 
-      <form className="download-panel" onSubmit={handleSubmit}>
-        <div className="url-field">
-          <LinkIcon size={21} />
-          <input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="Paste URL TikTok, Instagram, YouTube, Spotify, SoundCloud..."
-          />
+      <div className="download-hero-card">
+        <div>
+          <h3>Paste any supported music or video URL.</h3>
+          <p>
+            Works with popular music and social platforms. The result will be
+            shown as clean JSON and detected media links.
+          </p>
         </div>
+
+        <div className="download-disc">
+          <Download size={54} />
+        </div>
+      </div>
+
+      <form className="music-download-form" onSubmit={handleSubmit}>
+        <LinkIcon size={22} />
+
+        <input
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="Paste music or video URL..."
+        />
 
         <button type="submit" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="spin" size={18} />
-              Processing
+              Loading
             </>
           ) : (
             <>
@@ -178,18 +154,18 @@ export default function DownloaderPanel() {
         </button>
       </form>
 
-      <div className="platform-cloud">
-        {PLATFORMS.map((item) => (
+      <div className="platform-row">
+        {platforms.map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>
 
       {result && (
-        <div className={`api-result ${result.Status ? "ok" : "bad"}`}>
-          <div className="result-top">
+        <div className={`download-result ${result.Status ? "success" : "failed"}`}>
+          <div className="result-header">
             <div>
-              <p className="section-kicker">Response</p>
-              <h3>{result.Status ? "Success" : "Failed"}</h3>
+              <p className="eyebrow">Result</p>
+              <h3>{result.Status ? "Media Found" : "Download Failed"}</h3>
             </div>
 
             <button type="button" onClick={copyJson}>
@@ -198,26 +174,9 @@ export default function DownloaderPanel() {
             </button>
           </div>
 
-          <div className="result-info-grid">
-            <div>
-              <small>Status</small>
-              <strong>{String(result.Status)}</strong>
-            </div>
-
-            <div>
-              <small>Code</small>
-              <strong>{result.Code}</strong>
-            </div>
-
-            <div>
-              <small>Endpoint</small>
-              <strong>{result.Endpoint || "-"}</strong>
-            </div>
-          </div>
-
           {links.length > 0 && (
-            <div className="download-links">
-              <h4>Detected Download Links</h4>
+            <div className="media-links">
+              <h4>Media Links</h4>
 
               {links.map((link) => (
                 <a key={link} href={link} target="_blank" rel="noreferrer">
