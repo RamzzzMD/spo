@@ -1173,3 +1173,35 @@ video.aio-media-preview {
     grid-template-columns: 1fr;
   }
 }
+
+.song-error {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(243, 114, 127, 0.12);
+  color: #ffd6db;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.detail-error {
+  max-width: 520px;
+  margin: 0 0 18px;
+  font-size: 13px;
+}
+
+.player-time-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.player-time-row small {
+  color: #b3b3b3;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
