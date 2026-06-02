@@ -17,42 +17,41 @@ function detailHref(track) {
   return `/detail?${params.toString()}`;
 }
 
-export default function TrackCard({ track }) {
+export default function TrackCard({ track, large = false }) {
   const { playTrack } = useMusic();
 
   return (
-    <article className="track-card">
-      <div className="cover-wrap">
+    <article className={large ? "song-card large" : "song-card"}>
+      <div className="song-cover">
         <img
-          src={track.thumb || "https://placehold.co/400x400/181818/1ed760?text=Music"}
+          src={track.thumb || "https://placehold.co/500x500/181818/1ed760?text=Music"}
           alt={track.title || "Track cover"}
         />
 
         <button
           type="button"
-          className="floating-play"
+          className="cover-play"
           onClick={() => playTrack(track)}
           disabled={!track.urlpreview}
-          title={track.urlpreview ? "Play in background" : "No preview available"}
         >
           <Play size={20} fill="currentColor" />
         </button>
       </div>
 
-      <div className="track-body">
+      <div className="song-info">
         <strong>{track.title || "Unknown title"}</strong>
         <span>{track.artist || "Unknown artist"}</span>
         <small>{track.duration || "-"}</small>
       </div>
 
-      <div className="track-actions">
+      <div className="song-actions">
         <button
           type="button"
           onClick={() => playTrack(track)}
           disabled={!track.urlpreview}
         >
           <Play size={15} />
-          Play Background
+          Play
         </button>
 
         <Link href={detailHref(track)}>
